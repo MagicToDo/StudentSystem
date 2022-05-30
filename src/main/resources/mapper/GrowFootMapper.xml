@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liu.studentmanager.mapper.GrowFootMapper">
+
+    <resultMap type="com.liu.studentmanager.domain.GrowFoot" id="GrowFootInfo">
+        <result column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="student_id" property="studentId"/>
+        <result column="clazz_id" property="clazzId"/>
+        <result column="time" property="time"/>
+        <result column="photo" property="photo"/>
+    </resultMap>
+
+    <select id="queryList" resultMap="GrowFootInfo" >
+        <!-- 根据条件查询 所有信息 -->
+        SELECT *
+        from s_grow_footprint
+        <where>
+            <if test="title!=null"> and title LIKE concat("%",#{title},"%") </if>
+            <if test="studentId!=null"> and student_id LIKE concat("%",#{studentId},"%") </if>
+        </where>
+        limit #{startIndex},#{pagesize}
+    </select>
+
+    <select id="queryCount" resultType="int" >
+        select count(*) from s_grow_footprint
+        <where>
+            <if test="title!=null"> and title LIKE concat("%",#{title},"%") </if>
+            <if test="studentId!=null"> and student_id LIKE concat("%",#{studentId},"%") </if>
+        </where>
+    </select>
+
+    <insert id="addGrowFoot" parameterType="GrowFoot">
+        insert into s_grow_footprint(title,clazz_id,student_id,content,time,photo)
+        values(#{title},#{clazzId},#{studentId},#{content},#{time},#{photo})
+    </insert>
+
+    <delete id="deleteGrowFoot" parameterType="java.util.ArrayList">
+        delete from s_grow_footprint
+        <where>
+            id in
+            <foreach collection="list" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <update id="editGrowFoot" parameterType="GrowFoot">
+        update s_grow_footprint set title = #{title},clazz_id = #{clazzId},student_id = #{studentId},content = #{content},time = #{time},photo = #{photo} where id = #{id}
+    </update>
+
+    <select id="getGrowFootById" parameterType="java.util.List" resultMap="GrowFootInfo">
+        select *
+        from s_grow_footprint
+        <where>
+            id in
+            <foreach collection="list" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="findByTitle" parameterType="java.lang.String" resultType="int">
+        select id from s_grow_footprint where title = #{title}
+    </select>
+
+    <select id="isClazzId" parameterType="int" resultMap="GrowFootInfo" >
+        select * from s_grow_footprint
+        where clazz_id = #{id}
+    </select>
+
+    <select id="getAllBySid" parameterType="int" resultMap="GrowFootInfo" >
+        select * from s_grow_footprint
+        where clazz_id = #{clazzid}
+    </select>
+</mapper>

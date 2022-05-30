@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+
+<div th:fragment="welcome">
+	<div title="欢迎使用" style="padding:20px;overflow:hidden; color:#586868; ">
+		<p>
+		<p id="time" style="font-size: 25px; line-height: 30px; height: 30px;" th:color="cyan"></p>
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+			function setTime(){
+				var dt=new Date();
+				var arr_week=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+				var strWeek=arr_week[dt.getDay()];
+				var strHour=dt.getHours();
+				var strMinutes=dt.getMinutes();
+				var strSeconds=dt.getSeconds();
+				if (strMinutes<10) strMinutes="0"+strMinutes;
+				if (strSeconds<10) strSeconds="0"+strSeconds;
+				var strYear=dt.getFullYear()+"年";
+				var strMonth=(dt.getMonth()+1)+"月";
+				var strDay=dt.getDate()+"日";
+				<!--var strTime=strHour+":"+strMinutes+":"+strSeconds;-->
+				strTime=strHour+":"+strMinutes;
+				time.innerHTML=strYear+strMonth+strDay+" "+strTime+"  "+strWeek;
+			}
+			setInterval("setTime()",1000);
+			/*]]>*/
+		</script>
+		</p>
+
+		<p style="font-size: 50px; line-height: 60px; height: 60px;" th:if="${session.usertype == '1'}" th:text="${session.admin.username}"></p>
+		<p style="font-size: 50px; line-height: 60px; height: 60px;" th:if="${session.usertype == '2'}" th:text="${session.student.username}"></p>
+		<p style="font-size: 50px; line-height: 60px; height: 60px;" th:if="${session.usertype == '3'}" th:text="${session.teacher.username}"></p>
+		<p style="font-size: 50px; line-height: 60px; height: 60px;" th:if="${session.usertype == '4'}" th:text="${session.patriarch.relation}"></p>
+
+
+		<p style="font-size: 25px; line-height: 30px; height: 30px;">欢迎使用学生成长管理系统</p>
+		<p>开发人员：liu</p>
+		<hr />
+		<h2>系统环境</h2>
+		<p>系统环境：Windows</p>
+		<p>开发工具：IDEA</p>
+		<p>Java版本：JDK 1.8</p>
+		<p>服务器：tomcat 8.0</p>
+		<p>数据库：MySQL 8.0</p>
+		<p>系统采用技术：maven + springboot + mybatis </p>
+	</div>
+</div>
+</body>
+
+</html>

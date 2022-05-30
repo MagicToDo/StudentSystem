@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liu.studentmanager.mapper.HealthMapper">
+
+    <resultMap type="com.liu.studentmanager.domain.Health" id="HealthInfo">
+        <result column="id" property="id"/>
+        <result column="student_id" property="studentId"/>
+        <result column="height" property="height"/>
+        <result column="weight" property="weight"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <select id="queryList" resultMap="HealthInfo" >
+        <!-- 根据条件查询 健康的所有信息 -->
+        SELECT * from s_health
+        <where>
+            <if test="studentId!=null"> and student_id LIKE concat("%",#{studentId},"%") </if>
+        </where>
+        limit #{startIndex},#{pagesize}
+    </select>
+
+    <select id="queryCount" resultType="int" >
+        select count(*) from s_health
+        <where>
+            <if test="studentId!=null"> and student_id LIKE concat("%",#{studentId},"%") </if>
+        </where>
+    </select>
+
+    <insert id="addHealth" parameterType="Health">
+        insert into s_health(student_id,height,weight,remark)
+        values(#{studentId},#{height},#{weight},#{remark})
+    </insert>
+
+    <delete id="deleteHealth" parameterType="java.util.ArrayList">
+        delete from s_health
+        <where>
+            id in
+            <foreach collection="list" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <update id="editHealth" parameterType="Health">
+        update s_health set student_id = #{studentId},height = #{height},weight = #{weight},remark=#{remark} where id = #{id}
+    </update>
+
+    <select id="getHealthById" parameterType="java.util.List" resultMap="HealthInfo">
+        select *
+        from s_health
+        <where>
+            id in
+            <foreach collection="list" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="findByHealth" parameterType="java.lang.String" resultType="int">
+        select id from s_health where student_id = #{studentId}
+    </select>
+
+</mapper>

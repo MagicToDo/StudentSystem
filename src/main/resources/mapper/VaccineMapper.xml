@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liu.studentmanager.mapper.VaccineMapper">
+
+    <resultMap type="com.liu.studentmanager.domain.Vaccine" id="VaccineInfo">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="student_id" property="studentId"/>
+        <result column="injection_date" property="injectionDate"/>
+        <result column="info" property="info"/>
+    </resultMap>
+
+    <select id="queryList" resultMap="VaccineInfo" >
+        <!-- 根据条件查询 疫苗的所有信息 -->
+        SELECT * from s_vaccine
+        <where>
+            <if test="name!=null"> and name LIKE concat("%",#{name},"%") </if>
+            <if test="studentId!=null"> and student_id LIKE concat("%",#{studentId},"%") </if>
+        </where>
+        limit #{startIndex},#{pagesize}
+    </select>
+
+    <select id="queryCount" resultType="int" >
+        select count(*) from s_vaccine
+        <where>
+            <if test="name!=null"> and name LIKE concat("%",#{name},"%") </if>
+            <if test="studentId!=null"> and student_id LIKE concat("%",#{studentId},"%") </if>
+        </where>
+    </select>
+
+    <insert id="addVaccine" parameterType="Vaccine">
+        insert into s_vaccine(name,student_id,injection_date,info)
+        values(#{name},#{studentId},#{injectionDate},#{info})
+    </insert>
+
+    <delete id="deleteVaccine" parameterType="java.util.ArrayList">
+        delete from s_vaccine
+        <where>
+            id in
+            <foreach collection="list" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <update id="editVaccine" parameterType="Vaccine">
+        update s_vaccine set name = #{name},student_id = #{studentId},injection_date = #{injectionDate},info = #{info} where id = #{id}
+    </update>
+
+    <select id="getVaccineById" parameterType="java.util.List" resultMap="VaccineInfo">
+        select *
+        from s_vaccine
+        <where>
+            id in
+            <foreach collection="list" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="findByName" parameterType="java.lang.String" resultType="int">
+        select id from s_vaccine where name = #{name}
+    </select>
+
+</mapper>

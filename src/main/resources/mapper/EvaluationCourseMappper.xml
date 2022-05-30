@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liu.studentmanager.mapper.EvaluationCourseMapper">
+
+    <resultMap type="com.liu.studentmanager.domain.EvaluationCourse" id="EvaluationCourseInfo">
+        <result column="id" property="id"/>
+        <result column="student_id" property="studentId"/>
+        <result column="course_id" property="courseId"/>
+        <result column="evaluation" property="evaluation"/>
+    </resultMap>
+
+    <select id="queryList" resultMap="EvaluationCourseInfo" >
+        <!-- 根据条件查询 所有信息 -->
+        SELECT * from s_evaluation_c
+        <where>
+            <if test="studentId!=null"> and student_id LIKE concat("%",#{studentId},"%") </if>
+        </where>
+        limit #{startIndex},#{pagesize}
+    </select>
+
+    <select id="queryCount" resultType="int" >
+        select count(*) from s_evaluation_c
+        <where>
+            <if test="studentId!=null"> and student_id LIKE concat("%",#{studentId},"%") </if>
+        </where>
+    </select>
+
+    <insert id="addEvaluationCourse" parameterType="EvaluationCourse">
+        insert into s_evaluation_c(student_id,evaluation,course_id)
+        values(#{studentId},#{evaluation},#{courseId})
+    </insert>
+
+    <delete id="deleteEvaluationCourse" parameterType="java.util.ArrayList">
+        delete from s_evaluation_c
+        <where>
+            id in
+            <foreach collection="list" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <update id="editEvaluationCourse" parameterType="EvaluationCourse">
+        update s_evaluation_c set student_id = #{studentId},course_id = #{courseId},evaluation = #{evaluation} where id = #{id}
+    </update>
+
+    <select id="getEvaluationCourseById" parameterType="java.util.List" resultMap="EvaluationCourseInfo">
+        select *
+        from s_evaluation_c
+        <where>
+            id in
+            <foreach collection="list" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+<!--    <select id="findByName" parameterType="java.lang.String" resultType="int">-->
+<!--        select id from s_evaluation_c where name = #{name}-->
+<!--    </select>-->
+
+</mapper>
